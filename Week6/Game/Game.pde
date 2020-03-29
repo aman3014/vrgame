@@ -1,41 +1,42 @@
 Mover mover;
+ParticleSystem ps;
 
 final float plateSize = 700;
 final float plateThickness = 10;
-
-final float speedChange = 0.02;
-
-final ArrayList<Cylinder> cylinders = new ArrayList<Cylinder>();
 
 float prevMouseX, prevMouseY;
 float rotationSpeed = PI / 200;
 float xangle, zangle;
 
-final float[] plateColor = {15, 170, 210};
-final float[] cylinderColor = {190, 150, 20};
+final int fRate = 60;
+
+final float[] blue = {15, 170, 210};
+final float[] gold = {190, 150, 20};
 
 void settings() {
-  size(1000, 1000, P3D);
+  size(1800, 800, P3D);
 }
 
 void setup() {
   noStroke();
+  frameRate(fRate);
   mover = new Mover();
+  ps = new ParticleSystem();
 }
 
 void draw() {
   background(200);
   lights();
-  ambientLight(2.0, 2.0, 2.0);
-  changeColor(plateColor);
+  ambientLight(3.0, 3.0, 3.0);
 
   if (keyPressed && keyCode == SHIFT) {
     translate(width/2, height/2, 0);
     rotateX(PI/2);
-    box(plateSize, 1, plateSize);
-    changeColor(cylinderColor);
-    for (Cylinder c : cylinders) c.displayTop();
+    changeColor(blue);
     mover.displayTop();
+    box(plateSize, 1, plateSize);
+    changeColor(gold);
+    ps.displayTop();
     return;
   }
 
@@ -47,12 +48,13 @@ void draw() {
   translate(width/2, height/2, 0);
   rotateX(xangle);
   rotateZ(zangle);
-  box(plateSize, plateThickness, plateSize);
+  changeColor(gold);
+  ps.update(); //This must be done before the following line 
+               //(as the collisions must be checked before updating the mover)
   
-  changeColor(cylinderColor);
-  for (Cylinder c : cylinders) c.display();
-
+  changeColor(blue);
   mover.display(xangle, zangle);
+  box(plateSize, plateThickness, plateSize);
 
   prevMouseX = mouseX;
   prevMouseY = mouseY;
@@ -69,22 +71,11 @@ void mouseClicked() {
   
   //Distance from the edges of the plate
   if (keyPressed && keyCode == SHIFT && 
-    x > Cylinder.diameter / 2 && x < plateSize - Cylinder.diameter / 2 &&
-    y > Cylinder.diameter / 2 && y < plateSize - Cylinder.diameter / 2 &&
-    checkCylinderPlacement(tentative)) {
-    cylinders.add(new Cylinder(tentative));
+    x > Cylinder.radius / 2 && x < plateSize - Cylinder.radius / 2 &&
+    y > Cylinder.radius / 2 && y < plateSize - Cylinder.radius / 2 &&
+    tentative.dist(mover.location) > Cylinder.radius / 2 + mover.radius) {
+    ps.activate(tentative);
   }
-}
-
-boolean checkCylinderPlacement(PVector tentative) {
-  // Distance from other cylinders
-  for (Cylinder c : cylinders)
-    if (tentative.dist(c.location) <= Cylinder.diameter * 2) return false;
-
-  // Distance from the mover
-  if (tentative.dist(mover.location) <= Cylinder.diameter / 2 + mover.radius) return false;
-
-  return true;
 }
 
 void mouseWheel(MouseEvent event) {
