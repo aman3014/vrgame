@@ -1,7 +1,7 @@
 Mover mover;
 ParticleSystem ps;
 
-final float plateSize = 700;
+final float plateSize = 600;
 final float plateThickness = 10;
 
 float prevMouseX, prevMouseY;
@@ -13,61 +13,59 @@ final int fRate = 60;
 final float[] blue = {15, 170, 210};
 final float[] gold = {190, 150, 20};
 
-void settings() {
-  size(1800, 800, P3D);
-}
+int totalScore = 0;
+int lastScore = 0;
 
-void setup() {
-  noStroke();
-  frameRate(fRate);
+void initialize() {
   mover = new Mover();
   ps = new ParticleSystem();
 }
 
-void draw() {
-  background(200);
-  lights();
-  ambientLight(3.0, 3.0, 3.0);
+void drawGame() {
+  gameSurface.background(255);
+  gameSurface.lights();
+  gameSurface.ambientLight(3.0, 3.0, 3.0);
+  changeColor(gold);
 
   if (keyPressed && keyCode == SHIFT) {
-    translate(width/2, height/2, 0);
-    rotateX(PI/2);
+    gameSurface.translate(gameSurface.width/2, gameSurface.height/2, 0);
+    gameSurface.rotateX(PI/2);
+    ps.displayTop();
     changeColor(blue);
     mover.displayTop();
-    box(plateSize, 1, plateSize);
-    changeColor(gold);
-    ps.displayTop();
+    gameSurface.box(plateSize, 1, plateSize);
     return;
   }
 
-  textSize(20);
-  text("Rotation X : " + (xangle / PI) * 180, 10, 20);
-  text("Rotation Z : " + (zangle / PI) * 180, 10, 40);
-  text("Speed : " + (rotationSpeed / PI) * 180, 10, 60);
+  gameSurface.textSize(20);
+  gameSurface.text("Rotation X : " + (xangle / PI) * 180, 10, 20);
+  gameSurface.text("Rotation Z : " + (zangle / PI) * 180, 10, 40);
+  gameSurface.text("Speed : " + (rotationSpeed / PI) * 180, 10, 60);
 
-  translate(width/2, height/2, 0);
-  rotateX(xangle);
-  rotateZ(zangle);
-  changeColor(gold);
+  gameSurface.translate(gameSurface.width/2, gameSurface.height/2, 0);
+  gameSurface.rotateX(xangle);
+  gameSurface.rotateZ(zangle);
   ps.update(); //This must be done before the following line 
                //(as the collisions must be checked before updating the mover)
   
   changeColor(blue);
   mover.display(xangle, zangle);
   box(plateSize, plateThickness, plateSize);
+  gameSurface.box(plateSize, plateThickness, plateSize);
 
   prevMouseX = mouseX;
   prevMouseY = mouseY;
+  if (frameCount * 2 % fRate == 0) addBar(totalScore);
 }
 
 void changeColor(float[] rgb) {
-  fill(rgb[0], rgb[1], rgb[2]);
+  gameSurface.fill(rgb[0], rgb[1], rgb[2]);
 }
 
 void mouseClicked() {
-  float x = mouseX - width/2 + plateSize/2;
-  float y = mouseY - height/2 + plateSize/2;
-  PVector tentative = new PVector(mouseX - width/2, 0, mouseY - height/2);
+  float x = mouseX - gameSurface.width/2 + plateSize/2;
+  float y = mouseY - gameSurface.height/2 + plateSize/2;
+  PVector tentative = new PVector(mouseX - gameSurface.width/2, 0, mouseY - gameSurface.height/2);
   
   //Distance from the edges of the plate
   if (keyPressed && keyCode == SHIFT && 
@@ -87,6 +85,7 @@ void mouseWheel(MouseEvent event) {
 
 void mouseDragged() {
   if (keyPressed && keyCode == SHIFT) return; //Don't detect in cylinder add mode
+  if (mouseOver || locked) return; // Scroll bar is being used
 
   float xChange = mouseX - prevMouseX;
   float yChange = prevMouseY - mouseY;
@@ -102,4 +101,16 @@ void mouseDragged() {
   } else if (xChange > 0 && zangle <= PI / 3) {
     zangle += rotationSpeed;
   }
+}
+
+void drawScoreBoard() {
+  scoreBoard.textSize(20);
+  scoreBoard.stroke(0, 0, 0);
+  scoreBoard.text("Total Score:", 35, 35);
+  scoreBoard.text(totalScore, 35, 60);
+  scoreBoard.text("Velocity", 35, 100);
+  float v = mover.velocity.mag() > 0.1 ? mover.velocity.mag() : 0;
+  scoreBoard.text(String.format("%.1f", v), 35, 125);
+  scoreBoard.text("Last Score", 35, 165);
+  scoreBoard.text(lastScore, 35, 190);
 }
