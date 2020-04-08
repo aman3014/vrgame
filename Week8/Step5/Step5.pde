@@ -1,0 +1,66 @@
+PImage img;
+HScrollbar hs;
+
+void settings() {
+  size(1600, 620);
+}
+
+void setup() {
+  img = loadImage("nao.jpg");
+  hs = new HScrollbar(0, img.height, img.width, 20);
+}
+
+void draw() {
+  hs.display();
+  hs.update();
+  int threshold = (int) map(hs.getPos(), 0, 1, 0, 255);
+  image(img, 0, 0);//show image
+  PImage hueMap = hueMap(img);
+  image(hueMap, img.width, 0);
+}
+
+PImage hueMap(PImage img) {
+  PImage result = createImage(img.width, img.height, RGB);
+  for (int i = 0; i < img.pixels.length; ++i) {
+    result.pixels[i] = color(hue(img.pixels[i]));
+  }
+  
+  result.updatePixels();
+  return result;
+}
+
+PImage thresholdBinary(PImage img, int threshold) {
+  // create a new, initially transparent, 'result' image
+  PImage result = createImage(img.width, img.height, RGB);
+  float max = 0;
+  for (int i = 0; i < img.pixels.length; ++i) {
+    if (brightness(img.pixels[i]) > max) {
+      max = brightness(img.pixels[i]);
+    }
+  }
+  for (int i = 0; i < img.width * img.height; i++) {
+    // do something with the pixel img.pixels[i]
+    if (brightness(img.pixels[i]) >= threshold)
+      result.pixels[i] = color(max);
+  }
+  result.updatePixels();
+  return result;
+}
+
+PImage thresholdBinaryInverted(PImage img, int threshold) {
+  // create a new, initially transparent, 'result' image
+  PImage result = createImage(img.width, img.height, RGB);
+  float max = 0;
+  for (int i = 0; i < img.pixels.length; ++i) {
+    if (brightness(img.pixels[i]) > max) {
+      max = brightness(img.pixels[i]);
+    }
+  }
+  for (int i = 0; i < img.width * img.height; i++) {
+    // do something with the pixel img.pixels[i]
+    if (brightness(img.pixels[i]) <= threshold)
+      result.pixels[i] = color(max);
+  }
+  result.updatePixels();
+  return result;
+}

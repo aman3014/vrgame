@@ -7,6 +7,7 @@ void displayBarChart(float scrollBar) {
   float rectWidth = (barChart.width / (float) bars.size()) * scale;
   float currX = 0;
 
+  barChart.stroke(255, 255, 255);
   for (int score : bars) {
     float rectHeight = (score / (float) max) * barChart.height/2;
     if (rectHeight > 0) {

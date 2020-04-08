@@ -27,13 +27,13 @@ class ParticleSystem {
   }
 
   void deactivate() {
-    assert(running);
+    if (!running) return;
     cylinders.clear();
     running = false;
   }
 
   void addParticle() {
-    assert(running);
+    if (!running) return;
 
     PVector center;
     int numAttempts = 100;

@@ -18,6 +18,8 @@ class Cylinder {
 
     cylinder = createShape();
     cylinder.beginShape(QUAD_STRIP);
+    cylinder.noStroke();
+    cylinder.fill(gold);
 
     //draw the border of the cylinder
     for (int i = 0; i < x.length; i++) {

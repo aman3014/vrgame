@@ -107,5 +107,4 @@ class HScrollbar {
   float getPos() {
     return (sliderPosition - xPosition)/(barWidth - barHeight);
   }
-}- barHeight);
 }

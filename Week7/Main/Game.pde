@@ -8,10 +8,10 @@ float prevMouseX, prevMouseY;
 float rotationSpeed = PI / 200;
 float xangle, zangle;
 
-final int fRate = 60;
+final int fRate = 50;
 
-final float[] blue = {15, 170, 210};
-final float[] gold = {190, 150, 20};
+final color blue = color(15, 170, 210);
+final color gold = color(190, 150, 20);
 
 int totalScore = 0;
 int lastScore = 0;
@@ -25,13 +25,12 @@ void drawGame() {
   gameSurface.background(255);
   gameSurface.lights();
   gameSurface.ambientLight(3.0, 3.0, 3.0);
-  changeColor(gold);
+  gameSurface.fill(blue);
 
   if (keyPressed && keyCode == SHIFT) {
     gameSurface.translate(gameSurface.width/2, gameSurface.height/2, 0);
     gameSurface.rotateX(PI/2);
     ps.displayTop();
-    changeColor(blue);
     mover.displayTop();
     gameSurface.box(plateSize, 1, plateSize);
     return;
@@ -48,7 +47,6 @@ void drawGame() {
   ps.update(); //This must be done before the following line 
                //(as the collisions must be checked before updating the mover)
   
-  changeColor(blue);
   mover.display(xangle, zangle);
   box(plateSize, plateThickness, plateSize);
   gameSurface.box(plateSize, plateThickness, plateSize);
@@ -56,10 +54,6 @@ void drawGame() {
   prevMouseX = mouseX;
   prevMouseY = mouseY;
   if (frameCount * 2 % fRate == 0) addBar(totalScore);
-}
-
-void changeColor(float[] rgb) {
-  gameSurface.fill(rgb[0], rgb[1], rgb[2]);
 }
 
 void mouseClicked() {
