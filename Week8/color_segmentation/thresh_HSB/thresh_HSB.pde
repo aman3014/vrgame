@@ -68,6 +68,8 @@ PImage thresholdHSB(PImage img, int minH, int maxH, int minS, int maxS, int minB
 
     if (minH <= h && h <= maxH && minS <= s && s <= maxS && minB <= b && b <= maxB) {
       result.pixels[i] = color(255);
+    } else {
+      result.pixels[i] = color(0);
     }
   }
 

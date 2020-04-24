@@ -32,6 +32,8 @@ PImage thresholdBinary(PImage img, int threshold) {
     // do something with the pixel img.pixels[i]
     if (brightness(img.pixels[i]) >= threshold)
       result.pixels[i] = color(max);
+    else
+      result.pixels[i] = color(0);
   }
   result.updatePixels();
   return result;
