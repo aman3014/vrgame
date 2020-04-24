@@ -2,21 +2,21 @@ PImage img;
 HScrollbar hs;
 
 void settings() {
-  size(1600, 620);
+  size(1600, 600);
 }
 
 void setup() {
-  img = loadImage("board1.jpg");
-  hs = new HScrollbar(0, img.height, img.width, 20);
+  img = loadImage("../../resources/board4.jpg");
+  hs = new HScrollbar(0, img.height - 20, img.width, 20);
 }
 
 void draw() {
-  hs.display();
   hs.update();
   int threshold = (int) map(hs.getPos(), 0, 1, 0, 255);
   image(img, 0, 0);//show image
   PImage filtered = thresholdBinary(img, threshold);
   image(filtered, img.width, 0);
+  hs.display();
 }
 
 PImage thresholdBinary(PImage img, int threshold) {
