@@ -26,29 +26,35 @@ PImage findConnectedComponents(PImage input, boolean onlyBiggest) {
       if (col > 0 && input.pixels[currIndex - 1] == input.pixels[currIndex]) {
         indices.add(currIndex - 1);
       }
-      
-      int minLabel = Integer.MAX_VALUE;
-      for (int index : indices) if (labels[index] < minLabel) minLabel = labels[index];
 
-      TreeSet<Integer> eq = new TreeSet<Integer>();
-      for (int one : indices) {
-        eq.addAll(labelEquivalences.get(labels[one] - 1));
-      }
-      
-      for (int one : indices) {
-        labelEquivalences.get(labels[one] - 1).addAll(eq);
-      }
-      
+      // no same neighbors
       if (indices.isEmpty()) {
         labels[currIndex] = currentLabel;
         labelEquivalences.add(new TreeSet<Integer>());
-        labelEquivalences.get(currentLabel - 1).add(currentLabel++);
-      } else {
-        labels[currIndex] = minLabel;
+        labelEquivalences.get(labelEquivalences.size() - 1).add(currentLabel++);
+        continue;
       }
+
+      int minLabel = Integer.MAX_VALUE;
+      for (int index : indices) {
+        int best = labels[index];
+        while (best != labelEquivalences.get(best - 1).first()) {
+          best = labelEquivalences.get(best - 1).first();
+        }
+        
+        if (best < minLabel) {
+          minLabel = best;
+        }
+      }
+
+      for (int index : indices) {
+        labelEquivalences.get(labels[index] - 1).add(minLabel);
+      }
+
+      labels[currIndex] = minLabel;
     }
   }
-  
+
   // Second pass: re-label the pixels by their equivalent class
   for (int i = 0; i < labels.length; ++i) {
     labels[i] = labelEquivalences.get(labels[i] - 1).first();
@@ -102,5 +108,5 @@ PImage findConnectedComponents(PImage input, boolean onlyBiggest) {
 }
 
 boolean validIndex(PImage img, int r, int c) {
-  return 0 <= r && r <= img.height && 0 <= c && c <= img.width;
+  return 0 <= r && r < img.height && 0 <= c && c < img.width;
 }

@@ -9,13 +9,19 @@ void setup() {
   noLoop();
 }
 
+//test
+/*
 void draw() {
-  image(img, 0, 0);
+  image(findConnectedComponents(img, false), 0, 0);
+}*/
+
+void draw() {
   PImage onlyBoard = thresholdHSB(img, 100, 140, 100, 255, 0, 150);
   PImage blobed = findConnectedComponents(onlyBoard, true);
   PImage gauss = gaussBlur(blobed);
   PImage edges = scharr(gauss);
-  image(edges, img.width, 0);
+  image(onlyBoard, 0, 0);
+  image(blobed, img.width, 0);
 }
 
 PImage scharr(PImage img) {
