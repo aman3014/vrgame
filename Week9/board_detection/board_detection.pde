@@ -5,7 +5,7 @@ void settings() {
 }
 
 void setup() {
-  img = loadImage("../../resources/board1.jpg");
+  img = loadImage("../../resources/board4.jpg");
   noLoop();
 }
 
@@ -15,13 +15,14 @@ void draw() {
   image(findConnectedComponents(img, false), 0, 0);
 }*/
 
+
 void draw() {
-  PImage onlyBoard = thresholdHSB(img, 100, 140, 100, 255, 0, 150);
-  PImage blobed = findConnectedComponents(onlyBoard, true);
-  PImage gauss = gaussBlur(blobed);
-  PImage edges = scharr(gauss);
-  image(onlyBoard, 0, 0);
-  image(blobed, img.width, 0);
+  PImage board = thresholdHSB(img, 100, 140, 100, 255, 0, 150);
+  PImage gauss = gaussBlur(board);
+  PImage blobed = findConnectedComponents(gauss, true);
+  PImage edges = scharr(blobed);
+  image(img, 0, 0);
+  image(edges, img.width, 0);
 }
 
 PImage scharr(PImage img) {
@@ -84,9 +85,13 @@ PImage gaussBlur(PImage img) {
   
   PImage result = createImage(img.width, img.height, ALPHA);
 
-  for (int i = 1; i < result.height-1; ++i) {
-    for (int j = 1; j < result.width-1; ++j) {
-      result.pixels[i * result.width + j] = color(dot(img, kernel, i, j) / normFactor);
+  for (int i = 0; i < result.height; ++i) {
+    for (int j = 0; j < result.width; ++j) {
+      if (i == 0 || j == 0 || i == result.height - 1 || j == result.width - 1) {
+        result.pixels[i * result.width +j] = color(0);
+      } else {
+        result.pixels[i * result.width + j] = color(dot(img, kernel, i, j) / normFactor);
+      }
     }
   }
 
@@ -118,6 +123,8 @@ PImage thresholdHSB(PImage img, int minH, int maxH, int minS, int maxS, int minB
 
     if (minH <= h && h <= maxH && minS <= s && s <= maxS && minB <= b && b <= maxB) {
       result.pixels[i] = color(255);
+    } else {
+      result.pixels[i] = color(0);
     }
   }
 
