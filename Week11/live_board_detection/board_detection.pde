@@ -9,7 +9,8 @@ void detect(PImage img) {
   List<PVector> lines = hough(onlyBright, 7);
   //draw_hough(img, lines);
 
-  List<PVector> corners = findBestQuad(lines, img.width, img.height, Integer.MAX_VALUE, 0, false);
+  List<PVector> corners = findBestQuad(lines, img.width, img.height,
+    img.width * img.height * 3 / 4, img.width * img.height / 16, false);
   if (!corners.isEmpty()) {
     fill(0, 0, 0, 0); // transparent
     stroke(255, 0, 0);

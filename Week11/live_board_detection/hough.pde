@@ -1,9 +1,9 @@
 import java.util.Collections;
 
-float discretizationStepsPhi = 0.06;
-float discretizationStepsR = 2.5;
+float discretizationStepsPhi = 0.05;
+float discretizationStepsR = 2;
 int minVotes = 50;
-int neighborhood = 600;
+int neighborhood = w * 2;
 
 // dimensions of the accumulator
 int phiDim = (int) (Math.PI / discretizationStepsPhi + 1);
