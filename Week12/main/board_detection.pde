@@ -1,48 +1,23 @@
 import java.util.List;
 
 class BoardDetection {
-  int w, h, fr;
+  int w, h;
   
-  public BoardDetection(int w, int h, int fRate) {
+  public BoardDetection(int w, int h) {
     this.w = w;
     this.h = h;
-    this.fr = fRate;
   }
   
-  TwoDThreeD transform = new TwoDThreeD(w, h, fr);
-  QuadGraph qg = new QuadGraph();
   Hough ht = new Hough();
   BlobDetection bd = new BlobDetection();
-  
-  PVector detectRotation(PImage img) {
+
+  List<PVector> hough_lines(PImage img) {
     PImage board = thresholdHSB(img, 100, 130, 0, 255, 50, 200);
     PImage blurred = gaussBlur(board);
     PImage blobed = bd.findConnectedComponents(blurred, true);
     PImage edges = scharr(blobed);
     PImage onlyBright = thresholdHSB(edges, 0, 255, 0, 255, 200, 255);
-    List<PVector> lines = ht.hough(onlyBright, 10);
-    //ht.draw_hough(img, lines);
-
-    List<PVector> corners = qg.findBestQuad(lines, img.width, img.height, Integer.MAX_VALUE, 0, false);
-  
-    for (int i = 0; i < corners.size(); ++i) {
-      corners.set(i, new PVector(corners.get(i).x, corners.get(i).y, 1));
-    }
-
-    /*if (!corners.isEmpty()) {
-    fill(0, 0, 0, 0); // transparent
-    stroke(255, 0, 0);
-    strokeWeight(5);
-    quad
-    (
-      corners.get(0).x, corners.get(0).y,
-      corners.get(1).x, corners.get(1).y,
-      corners.get(2).x, corners.get(2).y,
-      corners.get(3).x, corners.get(3).y
-    );
-  }*/
-
-    return transform.get3DRotations(corners);
+    return ht.hough(onlyBright, 10);
   }
 
   PImage scharr(PImage img) {

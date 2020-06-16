@@ -8,7 +8,7 @@ PGraphics scroll;
 
 ImageProcessing imgproc;
 
-final int fRate = 60;
+final int fRate = 10;
 
 final int margin = 20;
 final int bottom = 300;
@@ -17,10 +17,6 @@ final int topSurfaceSize = side; // for the other classes, not to be used in the
 
 final int windowWidth = 1800;
 final int windowHeight = 1000;
-
-// debugging using movies
-BoardDetection detection = new BoardDetection(800, 480, fRate);
-Movie movie;
 
 void settings() {
   size(windowWidth, windowHeight, P3D);
@@ -36,13 +32,9 @@ void setup() {
   scroll = createGraphics(width, height);
   initScrollbar(bottom * 2, height - margin*3/2, barChart.width / 3, margin);
   
-  movie = new Movie(this, "C:/Users/amanb.DESKTOP-ODLI3IU/vrgame/Week12/resources/testvideo.avi");
-  movie.loop();
-/*
   imgproc = new ImageProcessing();
   String []args = {"Image processing window"};
   PApplet.runSketch(args, imgproc);
-*/  
 }
 
 void draw() {
@@ -50,14 +42,9 @@ void draw() {
   drawGameSurface();
   image(gameSurface, 0, 0);
 
-  if (movie.available()) {
-    movie.read();
-    PImage img = movie.get(0, 0, 800, 480);
-    PVector rot = detection.detectRotation(img);
-    float x = rot.x > 0 ? rot.x - PI : PI + rot.x;
-    setRotation(-x, -rot.y);
-    image(img, 0, 0);
-  }
+  PVector rot = imgproc.getRotation();
+  float x = rot.x > 0 ? rot.x - PI : rot.x + PI;
+  setRotation(-x, -rot.y);
 
   drawTopSurface();
   image(topSurface, margin, height - bottom + margin);
