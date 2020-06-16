@@ -18,6 +18,7 @@ class ImageProcessing extends PApplet {
   
   void setup() {
     movie = new Movie(this, "C:/Users/amanb.DESKTOP-ODLI3IU/vrgame/Week12/resources/testvideo.avi");
+    movie.frameRate(fRate);
     movie.loop();
     
     opencv = new OpenCV(this, 100, 100);

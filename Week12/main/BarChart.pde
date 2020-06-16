@@ -2,22 +2,24 @@ ArrayList<Integer> bars = new ArrayList<Integer>();
 float max = 1;
 
 void displayBarChart(float scrollBar) {
-  if (bars.isEmpty()) return;
-  float scale = map(scrollBar, 0, 1, 0.1, 1);
-  float rectWidth = (barChart.width / (float) bars.size()) * scale;
-  float currX = 0;
-
+  float barHeight = 20;
+  float barWidth = scrollBar * barHeight * 2;
+  int barScale = 10;
   barChart.stroke(255, 255, 255);
-  for (int score : bars) {
-    float rectHeight = (score / (float) max) * barChart.height/2;
-    if (rectHeight > 0) {
-      barChart.rect(currX, barChart.height/2 - rectHeight, rectWidth, rectHeight);
-    } else {
-      barChart.rect(currX, barChart.height/2, rectWidth, abs(rectHeight));
-    }
 
-    currX += rectWidth;
+  for (int i = 0; i < bars.size(); ++i) {
+    barChart.fill(150, 0, 200);
+    if (bars.get(i) < 0) {
+      for (int j = bars.get(i); j <= 0; j += barScale) {
+        barChart.rect(i * barWidth, barChart.height/2 - (j/barScale) * barWidth, barWidth, barWidth);
+      }
+    } else {
+      for (int j = 0; j < bars.get(i); j += barScale) {
+        barChart.rect(i * barWidth, barChart.height/2 - (j/barScale) * barWidth, barWidth, barWidth);
+      }
+    }
   }
+
 }
 
 void addBar(int score) {

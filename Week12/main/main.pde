@@ -5,10 +5,11 @@ PGraphics topSurface;
 PGraphics scoreBoard;
 PGraphics barChart;
 PGraphics scroll;
+PGraphics infoSurface;
 
 ImageProcessing imgproc;
 
-final int fRate = 10;
+final int fRate = 30;
 
 final int margin = 20;
 final int bottom = 300;
@@ -26,6 +27,7 @@ void setup() {
   initialize();
   frameRate(fRate);
   gameSurface = createGraphics(width, height - bottom, P3D);
+  infoSurface = createGraphics(width, bottom, P2D);
   topSurface = createGraphics(side, side, P2D);
   scoreBoard = createGraphics(side, side, P2D);
   barChart = createGraphics(width - bottom * 2 - margin, bottom - margin * 3, P2D);
@@ -39,13 +41,16 @@ void setup() {
 
 void draw() {
   background(175);
-  drawGameSurface();
-  image(gameSurface, 0, 0);
-
+  
+  // get the board's rotation angles from the image processing class
   PVector rot = imgproc.getRotation();
   float x = rot.x > 0 ? rot.x - PI : rot.x + PI;
   setRotation(-x, -rot.y);
 
+  drawGameSurface();
+  image(gameSurface, 0, 0);
+  drawInfoSurface();
+  image(infoSurface, 0, height - bottom);
   drawTopSurface();
   image(topSurface, margin, height - bottom + margin);
   drawScoreSurface();
@@ -62,6 +67,12 @@ void drawGameSurface() {
   gameSurface.fill(0, 100, 100);
   drawGame();
   gameSurface.endDraw();
+}
+
+void drawInfoSurface() {
+  infoSurface.beginDraw();
+  infoSurface.background(175);
+  infoSurface.endDraw();
 }
 
 void drawTopSurface() {

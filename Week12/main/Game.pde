@@ -51,7 +51,7 @@ void drawGame() {
 
   prevMouseX = mouseX;
   prevMouseY = mouseY;
-  if (frameCount * 2 % fRate == 0) addBar(totalScore);
+  if (frameCount * 2 % fRate == 0 && ps.running) addBar(totalScore);
 }
 
 void mouseClicked() {
